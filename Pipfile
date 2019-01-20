@@ -1,0 +1,21 @@
+[[source]]
+url = "https://www.pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+url = "https://www.piwheels.org/simple"
+verify_ssl = true
+name = "piwheels"
+
+[packages]
+
+[dev-packages]
+pytest = "*"
+pytest-watch = "*"
+
+[requires]
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true
