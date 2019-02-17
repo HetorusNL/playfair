@@ -157,3 +157,22 @@ class TestPlayFair(unittest.TestCase):
         playfair_key.print_tableau()
         playfair_key.generate_key("playfair example")
         playfair_key.print_tableau()
+
+    def test_09_key_valid(self):
+        playfair_key = PlayFairKey()
+
+        # initially, the key should be invalid
+        self.assertFalse(playfair_key.valid)
+
+        # when a (valid) key is generated, it should be valid
+        playfair_key.generate_key("asdf")
+        self.assertTrue(playfair_key.valid)
+
+        # if another (valid) key is generated, it should still be valid
+        playfair_key.generate_key("qwerty")
+        self.assertTrue(playfair_key.valid)
+
+        # if then an invalid key is generated, it should be invalid
+        with self.assertRaises(ValueError):  # invalid key generates exception
+            playfair_key.generate_key("invalid!")
+        self.assertFalse(playfair_key.valid)

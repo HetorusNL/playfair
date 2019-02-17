@@ -22,6 +22,13 @@ class PlayFairKey(object):
         self._substitute_char = "j"
         self._substitute_by = "i"
 
+        # whether the PlayFairKey is initialized
+        self._valid = False
+
+    @property
+    def valid(self):
+        return self._valid
+
     @property
     def substitute_char(self):
         return self._substitute_char
@@ -74,6 +81,9 @@ class PlayFairKey(object):
         return True
 
     def generate_key(self, keying_material):
+        # set valid to False before validating the keying material
+        self._valid = False
+
         # validate and set the keying material
         keying_material = self._validate_keying_material(keying_material)
         self._keying_material = keying_material
@@ -103,6 +113,9 @@ class PlayFairKey(object):
         for index in range(len(key)):
             self._tableau_row[int(index / 5)] += key[index]
             self._tableau_col[index % 5] += key[index]
+
+        # if a valid key has been generated, set valid to True
+        self._valid = True
 
     def _validate_keying_material(self, keying_material):
         # check if the keying material is of the correct type (str)
