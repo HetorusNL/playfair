@@ -1,5 +1,6 @@
 import logging
 
+from .playfair_encrypt import PlayFairEncrypt
 from .playfair_key import PlayFairKey
 
 logger = logging.getLogger(__name__)
@@ -44,3 +45,24 @@ class PlayFair(object):
     # print the tableau after the keying_material is parsed and key generated
     def print_tableau(self):
         self._key.print_tableau()
+
+    # encrypt functions
+    def encrypt(self, message):
+        self._ensure_valid_key()
+
+        playfair_encrypt = PlayFairEncrypt(self._key)
+        ciphertext = playfair_encrypt.encrypt(message)
+        return ciphertext
+
+    def encrypt_file(self, file):
+        self._ensure_valid_key()
+
+        playfair_encrypt = PlayFairEncrypt(self._key)
+        ciphertext = playfair_encrypt.encrypt_file(file)
+        return ciphertext
+
+    # private function to validate that a valid key is available
+    def _ensure_valid_key(self):
+        if not self._key.valid:
+            msg = "No valid key, call generate_key before encrypt or decrypt!"
+            raise RuntimeError(msg)

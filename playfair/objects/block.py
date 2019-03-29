@@ -1,7 +1,7 @@
 from .char import Char
 
 
-class InputBlock(object):
+class Block(object):
     def __init__(self):
         self._chars = []
         self._specials = []

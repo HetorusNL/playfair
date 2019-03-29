@@ -1,6 +1,8 @@
 import unittest
+from unittest.mock import patch
 
 from playfair import PlayFair
+from playfair import PlayFairEncrypt
 
 
 class TestPlayFair(unittest.TestCase):
@@ -48,3 +50,36 @@ class TestPlayFair(unittest.TestCase):
         # ensure that correct function in PlayFairKey is called
         playfair.generate_key()
         playfair.print_tableau()
+
+    def test_07_ensure_valid_key(self):
+        playfair = PlayFair()
+
+        # initially the key is invalid, should raise RuntimeError
+        with self.assertRaises(RuntimeError):
+            playfair._ensure_valid_key()
+
+        # after a valid key is generated it should run successful
+        playfair.generate_key("asdf")
+        playfair._ensure_valid_key()
+
+    def test_08_encrypt(self):
+        playfair = PlayFair()
+
+        # should call _ensure_valid_key and encrypt in PlayFairEncrypt
+        with patch.object(playfair, "_ensure_valid_key") as mock_valid:
+            with patch.object(PlayFairEncrypt, "encrypt") as mock_encrypt:
+                playfair.encrypt("asdf")
+
+        mock_valid.assert_called_once()
+        mock_encrypt.assert_called_once()
+
+    def test_09_encrypt_file(self):
+        playfair = PlayFair()
+
+        # should call _ensure_valid_key and encrypt in PlayFairEncrypt
+        with patch.object(playfair, "_ensure_valid_key") as mock_valid:
+            with patch.object(PlayFairEncrypt, "encrypt_file") as mock_encrypt:
+                playfair.encrypt_file("file.txt")
+
+        mock_valid.assert_called_once()
+        mock_encrypt.assert_called_once()
