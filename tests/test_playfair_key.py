@@ -176,3 +176,22 @@ class TestPlayFair(unittest.TestCase):
         with self.assertRaises(ValueError):  # invalid key generates exception
             playfair_key.generate_key("invalid!")
         self.assertFalse(playfair_key.valid)
+
+    def test_10_char_location(self):
+        playfair_key = PlayFairKey()
+        playfair_key.generate_key("abcde")
+
+        # first char
+        cl = playfair_key.char_location("a")
+        self.assertEqual(cl.row, 0)
+        self.assertEqual(cl.col, 0)
+
+        # char at the end of the first row
+        cl = playfair_key.char_location("e")
+        self.assertEqual(cl.row, 0)
+        self.assertEqual(cl.col, 4)
+
+        # char at the center of the second row
+        cl = playfair_key.char_location("h")
+        self.assertEqual(cl.row, 1)
+        self.assertEqual(cl.col, 2)

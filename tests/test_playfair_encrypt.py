@@ -1,5 +1,7 @@
 import unittest
+from unittest.mock import patch
 
+from playfair.objects import Block
 from playfair import PlayFairEncrypt
 from playfair import PlayFairKey
 
@@ -43,6 +45,87 @@ class TestPlayFairEncrypt(unittest.TestCase):
         for char in blocks[0]._chars:
             print("at index: ", char.index, " is character: ", char.char)
 
+    def test_02_encrypt_blocks(self):
+        playfair_encrypt = PlayFairEncrypt(self._playfair_key)
+
+        # test row function
+        playfair_encrypt._plain_text = "as"
+        playfair_encrypt._encrypt_blocks()
+        block = playfair_encrypt._blocks[0]
+        self.assertEqual(block.char(0), "s")
+        self.assertEqual(block.char(1), "d")
+
+        # test col function
+        self._playfair_key.print_tableau()
+        playfair_encrypt._plain_text = "uz"
+        playfair_encrypt._encrypt_blocks()
+        block = playfair_encrypt._blocks[0]
+        self.assertEqual(block.char(0), "z")
+        self.assertEqual(block.char(1), "b")
+
+        # test rect function
+        self._playfair_key.print_tableau()
+        playfair_encrypt._plain_text = "az"
+        playfair_encrypt._encrypt_blocks()
+        block = playfair_encrypt._blocks[0]
+        self.assertEqual(block.char(0), "b")
+        self.assertEqual(block.char(1), "v")
+
+    def test_03_construct_cipher_text(self):
+        playfair_encrypt = PlayFairEncrypt(self._playfair_key)
+        playfair_encrypt._blocks = []
+
+        block = Block()
+        block.add_char("a")
+        block.add_char("b")
+        playfair_encrypt._blocks.append(block)
+
+        block = Block()
+        block.add_special(",")
+        block.add_char("c")
+        block.add_special(".")
+        block.add_char("d")
+        block.add_special("1")
+        playfair_encrypt._blocks.append(block)
+
+        self.assertEqual(playfair_encrypt._construct_cipher_text(), "ab,c.d1")
+
+    def test_04_private_encrypt(self):
+        playfair_encrypt = PlayFairEncrypt(self._playfair_key)
+        # ensure that the required functions are called
+        with patch.object(playfair_encrypt, "_construct_cipher_text") as cct:
+            with patch.object(playfair_encrypt, "_encrypt_blocks") as meb:
+                playfair_encrypt._cipher_text = "1337"
+                # ensure that the constructed ciphertext is returned
+                self.assertEqual(playfair_encrypt._encrypt(), "1337")
+                meb.assert_called_once()
+                cct.assert_called_once()
+
+    def test_05_encrypt(self):
+        playfair_encrypt = PlayFairEncrypt(self._playfair_key)
+        message = "@asdf!"
+        cipher_text = "cipher_text"
+        with patch.object(playfair_encrypt, "_encrypt") as _encrypt:
+            playfair_encrypt._cipher_text = cipher_text
+            result = playfair_encrypt.encrypt(message)
+            _encrypt.assert_called_once()
+            self.assertEqual(playfair_encrypt._plain_text, message)
+            self.assertEqual(result, cipher_text)
+
+    def test_06_encrypt_file(self):
+        playfair_encrypt = PlayFairEncrypt(self._playfair_key)
+        message = "01_enc_file.txt: testmessage\n"
+        cipher_text = "cipher_text"
+        filename = "tests/files/01_enc_file.txt"
+        with patch.object(playfair_encrypt, "_encrypt") as _encrypt:
+            playfair_encrypt._cipher_text = cipher_text
+            result = playfair_encrypt.encrypt_file(filename)
+            _encrypt.assert_called_once()
+            self.assertEqual(playfair_encrypt._plain_text, message)
+            self.assertEqual(result, cipher_text)
+
+        self.assertEqual(playfair_encrypt._plain_text, message)
+
     def _assert_block_content(self, playfair_encrypt, correct_blocks):
         blocks = list(playfair_encrypt._iterator())
         self.assertEqual(len(blocks), len(correct_blocks))
@@ -51,5 +134,5 @@ class TestPlayFairEncrypt(unittest.TestCase):
             block = blocks[index]
             correct_block = correct_blocks[index]
 
-            self.assertEqual(block._chars[0].char, correct_block[0])
-            self.assertEqual(block._chars[1].char, correct_block[1])
+            self.assertEqual(block.char(0), correct_block[0])
+            self.assertEqual(block.char(1), correct_block[1])

@@ -1,6 +1,8 @@
 import logging
 import re
 
+from playfair.objects import CharLocation
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -148,3 +150,13 @@ class PlayFairKey(object):
                 print("| {} ".format(char), end="")
             print("|")
         print("-" * 21)
+
+    def char_location(self, char):
+        for row_index, row in enumerate(self._tableau_row):
+            if char in row:
+                for col_index, col in enumerate(self._tableau_col):
+                    if char in col:
+                        cl = CharLocation()
+                        cl.row = row_index
+                        cl.col = col_index
+                        return cl

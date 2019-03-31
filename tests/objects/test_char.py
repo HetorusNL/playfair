@@ -24,3 +24,17 @@ class TestChar(unittest.TestCase):
     def test_03_get_char(self):
         char = Char(0, "a")
         self.assertEqual(char.char, "a")
+
+    def test_04_char_setter(self):
+        char = Char(0, "a")
+        char.char = "b"
+        self.assertEqual(char.char, "b")
+        with self.assertRaises(ValueError):
+            char.char = 0
+
+    def test_05_index_setter(self):
+        char = Char(0, "a")
+        char.index = 1
+        self.assertEqual(char.index, 1)
+        with self.assertRaises(ValueError):
+            char.index = "a"
