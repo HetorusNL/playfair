@@ -153,6 +153,7 @@ class TestPlayFair(unittest.TestCase):
         with self.assertRaises(ValueError):
             playfair_key.print_tableau()
 
+        # after a key is generated, calls to print_tableau shouldn't fail
         playfair_key.generate_key("")
         playfair_key.print_tableau()
         playfair_key.generate_key("playfair example")

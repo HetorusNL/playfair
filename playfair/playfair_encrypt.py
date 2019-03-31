@@ -37,6 +37,12 @@ class PlayFairEncrypt(object):
     def _encrypt_blocks(self):
         self._blocks = []
         for block in self._iterator():
+            # if block only contains special chars, block.ready is false
+            if not block.ready:
+                # only append the block, since there aren't any chars in it
+                self._blocks.append(block)
+                continue
+
             # get the rule to use for encryption
             cl0 = self._playfair_key.char_location(block.char(0))
             cl1 = self._playfair_key.char_location(block.char(1))
@@ -73,6 +79,10 @@ class PlayFairEncrypt(object):
                 yield block
                 block = Block()
 
+        # if block ends with a single character, add padding char and yield it
         if block.current_char:
             block.add_char(self._playfair_key.padding_char)
+            yield block
+        # if block has no chars but has special chars, yield it
+        elif block.has_content:
             yield block

@@ -27,7 +27,6 @@ class TestRule(unittest.TestCase):
         block.add_char("x")
 
         # test increment and roll over
-        self.playfair_key.print_tableau()
         Rule.col(self.playfair_key, block)
         self.assertEqual(block.char(0), "x")
         self.assertEqual(block.char(1), "c")
@@ -38,7 +37,6 @@ class TestRule(unittest.TestCase):
         block.add_char("r")
 
         # test increment and roll over
-        self.playfair_key.print_tableau()
         Rule.rect(self.playfair_key, block)
         self.assertEqual(block.char(0), "g")
         self.assertEqual(block.char(1), "t")
@@ -48,7 +46,6 @@ class TestRule(unittest.TestCase):
         block.add_char("e")
 
         # test increment and roll over
-        self.playfair_key.print_tableau()
         Rule.rect(self.playfair_key, block)
         self.assertEqual(block.char(0), "z")
         self.assertEqual(block.char(1), "b")

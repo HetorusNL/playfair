@@ -39,11 +39,13 @@ class TestPlayFairEncrypt(unittest.TestCase):
         # assert padding after un-even characters plain_text
         playfair_encrypt._plain_text = "a='1'b!c?d"
         self._assert_block_content(playfair_encrypt, ["ab", "cd"])
+
+        # assert special_chars appended to empty block appear in output
+        playfair_encrypt._plain_text = "ab1337"
+        # blocks should contain: [{["ab"],[]}, {[],["1337"]}]
+        self._assert_block_content(playfair_encrypt, ["ab", []])
         blocks = list(playfair_encrypt._iterator())
-        for special in blocks[0]._specials:
-            print("at index: ", special.index, " is character: ", special.char)
-        for char in blocks[0]._chars:
-            print("at index: ", char.index, " is character: ", char.char)
+        self.assertTrue(blocks[1].has_content)
 
     def test_02_encrypt_blocks(self):
         playfair_encrypt = PlayFairEncrypt(self._playfair_key)
@@ -56,7 +58,6 @@ class TestPlayFairEncrypt(unittest.TestCase):
         self.assertEqual(block.char(1), "d")
 
         # test col function
-        self._playfair_key.print_tableau()
         playfair_encrypt._plain_text = "uz"
         playfair_encrypt._encrypt_blocks()
         block = playfair_encrypt._blocks[0]
@@ -64,8 +65,14 @@ class TestPlayFairEncrypt(unittest.TestCase):
         self.assertEqual(block.char(1), "b")
 
         # test rect function
-        self._playfair_key.print_tableau()
         playfair_encrypt._plain_text = "az"
+        playfair_encrypt._encrypt_blocks()
+        block = playfair_encrypt._blocks[0]
+        self.assertEqual(block.char(0), "b")
+        self.assertEqual(block.char(1), "v")
+
+        # test special char block at the end of plain_text should be processed
+        playfair_encrypt._plain_text = "az1337"
         playfair_encrypt._encrypt_blocks()
         block = playfair_encrypt._blocks[0]
         self.assertEqual(block.char(0), "b")
@@ -134,5 +141,6 @@ class TestPlayFairEncrypt(unittest.TestCase):
             block = blocks[index]
             correct_block = correct_blocks[index]
 
-            self.assertEqual(block.char(0), correct_block[0])
-            self.assertEqual(block.char(1), correct_block[1])
+            if block.ready:
+                self.assertEqual(block.char(0), correct_block[0])
+                self.assertEqual(block.char(1), correct_block[1])

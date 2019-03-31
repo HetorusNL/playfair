@@ -47,7 +47,7 @@ class TestPlayFair(unittest.TestCase):
     def test_06_print_tableau(self):
         playfair = PlayFair()
 
-        # ensure that correct function in PlayFairKey is called
+        # ensure that correct function in PlayFairKey is called successfully
         playfair.generate_key()
         playfair.print_tableau()
 

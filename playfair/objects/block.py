@@ -30,6 +30,10 @@ class Block(object):
     def ready(self):
         return len(self._chars) == 2
 
+    @property
+    def has_content(self):
+        return self._index != 0
+
     def char(self, location):
         if not self.ready:
             raise ValueError("Block is not yet ready!")
