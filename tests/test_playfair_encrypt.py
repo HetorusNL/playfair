@@ -101,11 +101,11 @@ class TestPlayFairEncrypt(unittest.TestCase):
         playfair_encrypt = PlayFairEncrypt(self._playfair_key)
         # ensure that the required functions are called
         with patch.object(playfair_encrypt, "_construct_cipher_text") as cct:
-            with patch.object(playfair_encrypt, "_encrypt_blocks") as meb:
+            with patch.object(playfair_encrypt, "_encrypt_blocks") as eb:
                 playfair_encrypt._cipher_text = "1337"
                 # ensure that the constructed ciphertext is returned
                 self.assertEqual(playfair_encrypt._encrypt(), "1337")
-                meb.assert_called_once()
+                eb.assert_called_once()
                 cct.assert_called_once()
 
     def test_05_encrypt(self):
@@ -130,8 +130,6 @@ class TestPlayFairEncrypt(unittest.TestCase):
             _encrypt.assert_called_once()
             self.assertEqual(playfair_encrypt._plain_text, message)
             self.assertEqual(result, cipher_text)
-
-        self.assertEqual(playfair_encrypt._plain_text, message)
 
     def _assert_block_content(self, playfair_encrypt, correct_blocks):
         blocks = list(playfair_encrypt._iterator())

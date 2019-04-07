@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from playfair import PlayFair
+from playfair import PlayFairDecrypt
 from playfair import PlayFairEncrypt
 
 
@@ -83,3 +84,25 @@ class TestPlayFair(unittest.TestCase):
 
         mock_valid.assert_called_once()
         mock_encrypt.assert_called_once()
+
+    def test_10_decrypt(self):
+        playfair = PlayFair()
+
+        # should call _ensure_valid_key and decrypt in PlayFairDecrypt
+        with patch.object(playfair, "_ensure_valid_key") as mock_valid:
+            with patch.object(PlayFairDecrypt, "decrypt") as mock_decrypt:
+                playfair.decrypt("asdf")
+
+        mock_valid.assert_called_once()
+        mock_decrypt.assert_called_once()
+
+    def test_11_decrypt_file(self):
+        playfair = PlayFair()
+
+        # should call _ensure_valid_key and decrypt in PlayFairDecrypt
+        with patch.object(playfair, "_ensure_valid_key") as mock_valid:
+            with patch.object(PlayFairDecrypt, "decrypt_file") as mock_decrypt:
+                playfair.decrypt_file("file.txt")
+
+        mock_valid.assert_called_once()
+        mock_decrypt.assert_called_once()

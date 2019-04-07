@@ -1,5 +1,6 @@
 import logging
 
+from .playfair_decrypt import PlayFairDecrypt
 from .playfair_encrypt import PlayFairEncrypt
 from .playfair_key import PlayFairKey
 
@@ -60,6 +61,21 @@ class PlayFair(object):
         playfair_encrypt = PlayFairEncrypt(self._key)
         ciphertext = playfair_encrypt.encrypt_file(file)
         return ciphertext
+
+    # decrypt functions
+    def decrypt(self, cipher_text):
+        self._ensure_valid_key()
+
+        playfair_decrypt = PlayFairDecrypt(self._key)
+        plain_text = playfair_decrypt.decrypt(cipher_text)
+        return plain_text
+
+    def decrypt_file(self, file):
+        self._ensure_valid_key()
+
+        playfair_decrypt = PlayFairDecrypt(self._key)
+        plain_text = playfair_decrypt.decrypt_file(file)
+        return plain_text
 
     # private function to validate that a valid key is available
     def _ensure_valid_key(self):

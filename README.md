@@ -32,6 +32,14 @@ The functionalities specified below assume that all code is executed and variabl
   cipher_text = playfair.encrypt_file("path/to/plaintext/file")
   ```
 
+- Decryption of messages or files provided (after a key has been generated).
+  This also includes 'passthrough' of non-decryptable characters like punctuation:
+
+  ```python
+  plain_text = playfair.decrypt("ciphertext message")
+  plain_text = playfair.decrypt_file("path/to/ciphertext/file")
+  ```
+
 - The substitute char (character that is substituted), substitute by (character that the substitube char is substituted by) and padding char (character that is used for padding) can be read and changed.
 
   substitute_char defaults to 'j'.  
@@ -49,18 +57,8 @@ The functionalities specified below assume that all code is executed and variabl
 
 - All or nearly all functions include input verification and report any errors or warnings as they occur.
 
-## Functionality under construction
-
-- Decryption of messages or files provided (after a key has been generated).
-  This also includes 'passthrough' of non-decryptable characters like punctuation:
-
-  ```python
-  plain_text = playfair.decrypt("ciphertext message")
-  plain_text = playfair.decrypt_file("path/to/ciphertext/file")
-  ```
-
 ## Future work
 
-- Add ability to brute force PlayFair keys (either the keying material or the resulting tableau).
+- Add ability to brute force PlayFair keys (either the rules, the keying material or the resulting tableau).
   This brute force attempt can use the PlayFair class to perform encryption/decryption of a chosen message,
-  thus has access to both the original message and the ciphertext of its chosen
+  thus has access to both the original message and the ciphertext of its choosing

@@ -8,33 +8,42 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class PlayFairEncrypt(object):
+class PlayFairDecrypt(object):
     def __init__(self, playfair_key):
         self._playfair_key = playfair_key
 
-    def encrypt(self, message):
-        self._plain_text = message
-        self._encrypt()
-        return self._cipher_text
+    def decrypt(self, cipher_text):
+        self._cipher_text = cipher_text
+        self._decrypt()
+        return self._plain_text
 
-    def encrypt_file(self, file):
-        self._plain_text = open(file).read()
-        self._encrypt()
-        return self._cipher_text
+    def decrypt_file(self, file):
+        self._cipher_text = open(file).read()
+        self._decrypt()
+        return self._plain_text
 
-    def _encrypt(self):
-        self._encrypt_blocks()
-        self._construct_cipher_text()
-        return self._cipher_text
+    def _decrypt(self):
+        self._decrypt_blocks()
+        self._construct_plain_text()
+        return self._plain_text
 
-    def _construct_cipher_text(self):
-        self._cipher_text = ""
+    def _construct_plain_text(self):
+        self._plain_text = ""
         for block in self._blocks:
-            self._cipher_text += block.text
+            block_text = block.text
 
-        return self._cipher_text
+            for char in block_text:
+                # handle substitute_by and padding_char correctly
+                if char == self._playfair_key.substitute_by:
+                    self._plain_text += self._playfair_key.substitute_char
+                elif char == self._playfair_key.padding_char:
+                    continue
+                else:
+                    self._plain_text += char
 
-    def _encrypt_blocks(self):
+        return self._plain_text
+
+    def _decrypt_blocks(self):
         self._blocks = []
         for block in self._iterator():
             # if block only contains special chars, block.ready is false
@@ -54,25 +63,17 @@ class PlayFairEncrypt(object):
                 rule = Rule.rect
 
             # apply the rule and add the processed block to the _blocks array
-            rule(self._playfair_key, block, Rule.ENCRYPT)
+            rule(self._playfair_key, block, Rule.DECRYPT)
             self._blocks.append(block)
 
     def _iterator(self):
         block = Block()
         valid_chars = re.compile(r"^[a-z]$")
 
-        for char in self._plain_text:
+        for char in self._cipher_text:
             if not valid_chars.match(char):
                 block.add_special(char)
                 continue
-
-            if char == self._playfair_key.substitute_char:
-                char = self._playfair_key.substitute_by
-
-            if char == block.current_char:
-                block.add_char(self._playfair_key.padding_char)
-                yield block
-                block = Block()
 
             block.add_char(char)
             if block.ready:
@@ -81,8 +82,7 @@ class PlayFairEncrypt(object):
 
         # if block ends with a single character, add padding char and yield it
         if block.current_char:
-            block.add_char(self._playfair_key.padding_char)
-            yield block
+            raise ValueError("Invalid cipher_text, couldn't decrypt block!")
         # if block has no chars but has special chars, yield it
         elif block.has_content:
             yield block
