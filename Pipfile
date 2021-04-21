@@ -11,6 +11,8 @@ name = "piwheels"
 [packages]
 
 [dev-packages]
+py = ">=1.10.0"
+PyYAML = ">=5.4"
 pytest = "*"
 pytest-watch = "*"
 
