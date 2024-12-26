@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "playfair"
+version = "0.1.0"
+description = "PlayFair Encryption and Decryption"
+authors = ["Tim Klein Nijenhuis <tim@hetorus.nl>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+pytest = "^8.3.4"
+pytest-watch = "^4.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
